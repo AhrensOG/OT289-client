@@ -1,42 +1,41 @@
 import React, { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import ScreenContact from './features/screencontac/ScreenContac';
-import Activities from './features/activities/Activities';
-import ScreenNews from './features/screenNews/ScreenNews';
-import UsersTable from './features/usersTable/UsersTable';
-import Main from './features/mainScreen/Main'
-import Login from './features/loginForm/LoginForm'
-import Register from './features/registerForm/RegisterForm';
-import Contact from './features/screencontac/ScreenContac'
-import ActivityMain from './features/activityMain/ActivityMain'
-import BackOffice from './features/backOffice/BackOffice';
-
-
-import { Routes, Route, useLocation } from 'react-router-dom';
-import ContactsPanel from './features/backOffice/partials/ContactsPanel';
-import ActivityPage from './features/activityPage/ActivityPage';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
-/* import UsersTable from './features/usersTable/UsersTable' */
-import NewsDetail from './features/newsDetail/NewsDetail'
-import LoginRouteGuard from './LoginRouteGuard';
-import NewsPanel from './features/backOffice/partials/NewsPanel'
+import Main from './components/Main/Main/Main'
+import Contact from './components/Contact/Contact'
+import Login from './components/Users/Login/Login'
+import Register from './components/Users/Register/Register';
+import ActivityHome from './components/Activities/ActivityHome/ActivityHome'
+import BackOffice from './components/BackOffice/BackOffice';
+import { Routes, Route } from 'react-router-dom';
+import ActivityDetail from './components/Activities/ActivityDetail/ActivityDetail';
+import NewsHome from './components/News/NewsHome/NewsHome'
+import NewsDetail from './components/News/NewsDetail/NewsDetail'
 import Layout from './components/Layout/Layout';
-import Nosotros from './features/nosotros/Nosotros';
+import AboutUs from './components/AboutUs/AboutUs' 
 import { useDispatch, useSelector } from 'react-redux'
-import { refresh } from './features/user/userSlice'
+import { refresh } from './reducers/userReducer'
+import { fetchOrganization } from './reducers/organizationReducer';
 import { BASE_PATH } from './utils/constants'
 import { customFetch } from './services/fetch'
 import ProtectedRoute from './features/protectedRoute/ProtectedRoute'
+import TestimonialsHome from './components/Testimonials/TestimonialsHome/TestimonialsHome';
+import Profile from './components/Profile/Profile'
+import EditProfile from './components/Profile/EditProfile/EditProfile';
+import ConfirmEmail from './components/ConfirmEmail/ConfirmEmail';
+import EmailConfirmed from './components/EmailConfirmed/EmailConfirmed';
+import Donations from './components/Donations/Donations';
+
 
 function App() {
-  const location = useLocation();
+  // const location = useLocation();
   const token = localStorage.getItem('token')
   const dispatch = useDispatch()
   const refreshURL = `${BASE_PATH}/auth/me`
   const refreshProperties = {
     method: 'get'
   }
+
   useEffect(() => {
     if(token){
       customFetch(refreshURL, refreshProperties)
@@ -47,68 +46,54 @@ function App() {
             lastName: user.data.payload.lastName,
             email: user.data.payload.email,
             image: user.data.payload.image,
-            role: user.data.payload.roleId,
+            roleId: user.data.payload.roleId,
+            isConfirmed: user.data.payload.isConfirmed,
             token
           }
-    
           dispatch(refresh(userObj))
         })
           .catch(error => console.log(error))
       }
+    //get organization data
+    dispatch(fetchOrganization())
   }, [])
 
 
   const userData = useSelector(store => store.user)
 
   return (
-
-    <div className="App">    
-      
-      <TransitionGroup component={null}>
-      
-      <CSSTransition
-      key={location.key}
-      timeout={750}
-      classNames="fade"
-      >       
-      <Routes location={location}>
-        <Route path="/contac" element={<ScreenContact />} />    
-        <Route path="/backoffice/activities" element={<Activities />} />
-        <Route path="/backoffice/users" element={<UsersTable />} />     
-        <Route path="/*" element={<MainSPA />} />
-        <Route path="/contact" element={<ScreenContact />} />
-        <Route element={<ProtectedRoute isAllowed={!!userData && userData.role == 1} />}>
+    <div className="App">
+      <Routes>
+        <Route path="/*" element={<MainSPA userData={userData} />} />
+        <Route element={<ProtectedRoute isAllowed={!!userData} />}>
           <Route path="/backOffice/*" element={ <BackOffice/> } />
-          <Route path="/backoffice/users" element={<UsersTable />} />
-          <Route path="/backoffice/activities" element={<Activities />} />    
-          <Route exact path='/backoffice/contacts' element={<ContactsPanel />} />
-          <Route path='/backoffice/newspanel' element={<NewsPanel/>} />
         </Route>
       </Routes>
-      
-      </CSSTransition>
-      
-      </TransitionGroup>      
-     
     </div>
-    
   );
 }
 
-function MainSPA() {
+function MainSPA({ userData }) {
+
 
   return (
     <Layout>
       <Routes>
         <Route path="/" element={<Main />} />
+        <Route exact path='/usuario/:id' element={<Profile />} />
+        <Route exact path='/usuario/editar/:id' element={<EditProfile/>} /> 
+        <Route exact path='/usuario/confirmaremail/' element={<ConfirmEmail />} />
+        <Route exact path='/confirmacion/:token' element={<EmailConfirmed />} />
+        <Route exact path='/donaciones' element={<Donations />} />
+        <Route path="/contacto" element={<Contact />} />
+        <Route path="/nosotros" element={<AboutUs/>} />
+        <Route path="/novedades" element={<NewsHome />} />
+        <Route path="/novedades/:id" element={<NewsDetail />} />
+        <Route path='/actividades' element={<ActivityHome />} />
+        <Route path='/actividades/:id' element={<ActivityDetail />} />
         <Route path="/registrarse" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/contacto" element={<Contact />} />
-        <Route path="/nosotros" element={<Nosotros/>} />        
-        <Route exact path='/actividades' element={<ActivityMain />} />
-        <Route exact path='/actividades/:id' element={<ActivityPage />} />
-        <Route path="/novedades" element={<ScreenNews />} />
-        <Route path="/novedades/:id" element={<NewsDetail />} />
+        <Route path="/testimonios" element={<TestimonialsHome />} />
       </Routes>
     </Layout>
   );
