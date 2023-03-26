@@ -11,47 +11,47 @@ import Swal from 'sweetalert2'
 const Donations = () => {
 
 
-    const navigate = useNavigate()
+    // const navigate = useNavigate()
 
     const user = useSelector(store => store.user)
 
-    const formik = useFormik({
-        initialValues: initialValues(),
-        validateOnBlur: false,
-        validateOnChange: false,
-        validationSchema: Yup.object(validationSchema()),
-        onSubmit: async (formData) => {
-            console.log(formData)
-            console.log(user.firstName)
-            const url = `${BASE_PATH}/checkout`
-            const obj = {
-                currency: formData.currency,
-                donation: formData.donation,
-                firstname: user ? user.firstName : 'anonimo',
-                surname: user ? user.lastName : 'anonimo',
-                email: user ? user.email : 'anonimo@gmail.com'
-            }
-            const properties = {
-                method: 'post',
-                data: obj
-            }
-            Swal.fire({
-                title: 'Donar',
-                icon: 'info',
-                text: 'Usted esta a punto de ser redireccionado a MercadoPago',
-                showDenyButton:true,
-                confirmButtonText: 'Si',
-                confirmButtonColor: '#9ac9fb',
-                denyButtonText: 'Cancelar'
-              }).then(result => {
-                if(result.isConfirmed){
-                customFetch(url, properties)
-                    .then(fetch => {
-                        window.location.href = fetch.data
-                    })
-                }})
-        }   
-    })
+    // const formik = useFormik({
+    //     initialValues: initialValues(),
+    //     validateOnBlur: false,
+    //     validateOnChange: false,
+    //     validationSchema: Yup.object(validationSchema()),
+    //     onSubmit: async (formData) => {
+    //         console.log(formData)
+    //         console.log(user.firstName)
+    //         const url = `${BASE_PATH}/checkout`
+    //         const obj = {
+    //             currency: formData.currency,
+    //             donation: formData.donation,
+    //             firstname: user ? user.firstName : 'anonimo',
+    //             surname: user ? user.lastName : 'anonimo',
+    //             email: user ? user.email : 'anonimo@gmail.com'
+    //         }
+    //         const properties = {
+    //             method: 'post',
+    //             data: obj
+    //         }
+    //         Swal.fire({
+    //             title: 'Donar',
+    //             icon: 'info',
+    //             text: 'Usted esta a punto de ser redireccionado a MercadoPago',
+    //             showDenyButton:true,
+    //             confirmButtonText: 'Si',
+    //             confirmButtonColor: '#9ac9fb',
+    //             denyButtonText: 'Cancelar'
+    //           }).then(result => {
+    //             if(result.isConfirmed){
+    //             customFetch(url, properties)
+    //                 .then(fetch => {
+    //                     window.location.href = fetch.data
+    //                 })
+    //             }})
+    //     }   
+    // })
 
   return (
     <div className='donations-container'>
