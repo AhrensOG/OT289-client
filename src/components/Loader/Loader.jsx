@@ -1,5 +1,5 @@
 import React from "react";
-import ColorRing from "react-loader-spinner/dist/loader/ColorRing";
+import { ColorRing } from "react-loader-spinner";
 
 const Loader = ({ render = true, height = "100", width = "100", colors = ["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"], wrapperClass = "blocks-wrapper", inLineStyle = {} }) => {
   return (
